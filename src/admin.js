@@ -1,6 +1,7 @@
 import { PALETTES, escapeHTML, formatPrice } from './config.js';
 import { showToast } from './ui.js';
-import { getProducts, updateLocalProducts, renderProducts, saveProducts } from './products.js';
+import { getProducts, updateLocalProducts, renderProducts } from './products.js';
+import { getServices, updateLocalServices, renderServices } from './services.js';
 
 const PaletteManager = {
   current: 'nude-rose',
@@ -337,24 +338,124 @@ const AdminPanel = {
   },
 
   renderServicesTab() {
-    const services = [
-      { name: 'Manicure Clásica Premium', price: 1500, total: 4500, duration: '45 min' },
-      { name: 'Esmaltado Semi-Permanente', price: 2000, total: 5800, duration: '60 min' },
-      { name: 'Uñas Esculpidas en Gel', price: 3500, total: 9800, duration: '90 min' },
-      { name: 'Nail Art + Decoración', price: 2800, total: 7500, duration: '75 min' },
-    ];
+    const svcs = getServices();
     this.elements.body.innerHTML = `
-      <p style="font-size:0.9rem;color:var(--color-gray);margin-bottom:1.25rem;">Servicios disponibles para reserva con seña online. Editá sus valores desde el HTML por ahora.</p>
-      ${services.map((s) => `
-        <div class="admin__service-item">
-          <div class="admin__service-header"><span class="admin__service-name">${escapeHTML(s.name)}</span></div>
-          <div class="admin__service-meta">
-            <span><i class="fa-solid fa-tag"></i> Seña: $${formatPrice(s.price)}</span>
-            <span><i class="fa-solid fa-coins"></i> Total: $${formatPrice(s.total)}</span>
-            <span><i class="fa-regular fa-clock"></i> ${s.duration}</span>
-          </div>
-        </div>`).join('')}
-      <p style="font-size:0.82rem;color:var(--color-gray);margin-top:1rem;text-align:center;"><i class="fa-solid fa-code"></i> Para editar servicios, modificá el archivo <code>index.html</code></p>`;
+      <div class="admin__products-header">
+        <h3>Servicios (${svcs.length})</h3>
+        <button class="admin__btn-add" id="adminAddService" aria-label="Agregar servicio"><i class="fa-solid fa-plus"></i></button>
+      </div>
+      <div class="admin__product-form" id="adminServiceForm">
+        <div class="admin__field"><label>Nombre</label><input type="text" id="sf_name"></div>
+        <div class="admin__field"><label>Descripción</label><textarea id="sf_description" rows="2"></textarea></div>
+        <div class="admin__field"><label>Seña (precio)</label><input type="number" id="sf_price"></div>
+        <div class="admin__field"><label>Total del servicio</label><input type="number" id="sf_total"></div>
+        <div class="admin__field"><label>Duración</label><input type="text" id="sf_duration" placeholder="Ej: 60 min"></div>
+        <div class="admin__field"><label>URL de imagen</label><input type="text" id="sf_image"></div>
+        <div class="admin__field"><label>Badge (opcional)</label><input type="text" id="sf_badge" placeholder="Más elegido / Premium"></div>
+        <div class="admin__field"><label>Características (separadas por coma)</label><input type="text" id="sf_features" placeholder="Ej: 45 min, Hidratación profunda"></div>
+        <div class="admin__form-actions">
+          <button class="btn btn--primary" id="sf_save">Guardar</button>
+          <button class="btn btn--outline" id="sf_cancel">Cancelar</button>
+        </div>
+      </div>
+      <div id="adminServicesList">
+        ${svcs.map((s) => `
+          <div class="admin__service-item" data-id="${s.id}">
+            <div class="admin__service-header">
+              <span class="admin__service-name">${escapeHTML(s.name)}</span>
+              <div style="display:flex;gap:0.4rem;">
+                <button class="admin__product-btn" data-action="edit-service" data-id="${s.id}" aria-label="Editar"><i class="fa-solid fa-pen"></i></button>
+                <button class="admin__product-btn admin__product-btn--delete" data-action="delete-service" data-id="${s.id}" aria-label="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+            </div>
+            <div class="admin__service-meta">
+              <span><i class="fa-solid fa-tag"></i> Seña: $${formatPrice(s.price)}</span>
+              <span><i class="fa-solid fa-coins"></i> Total: $${formatPrice(s.total)}</span>
+              <span><i class="fa-regular fa-clock"></i> ${escapeHTML(s.duration)}</span>
+            </div>
+          </div>`).join('')}
+      </div>`;
+
+    document.getElementById('adminAddService').addEventListener('click', () => {
+      this.editingServiceId = null;
+      document.getElementById('adminServiceForm').classList.add('is-open');
+      ['sf_name','sf_description','sf_price','sf_total','sf_duration','sf_image','sf_badge','sf_features'].forEach(id => document.getElementById(id).value = '');
+    });
+
+    document.getElementById('sf_save').addEventListener('click', () => this._saveService());
+    document.getElementById('sf_cancel').addEventListener('click', () => {
+      document.getElementById('adminServiceForm').classList.remove('is-open');
+      this.editingServiceId = null;
+    });
+
+    document.getElementById('adminServicesList').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const id = parseInt(btn.dataset.id, 10);
+      const svcs = getServices();
+
+      if (btn.dataset.action === 'edit-service') {
+        const s = svcs.find(svc => svc.id === id);
+        if (!s) return;
+        this.editingServiceId = id;
+        document.getElementById('adminServiceForm').classList.add('is-open');
+        document.getElementById('sf_name').value = s.name;
+        document.getElementById('sf_description').value = s.description || '';
+        document.getElementById('sf_price').value = s.price;
+        document.getElementById('sf_total').value = s.total;
+        document.getElementById('sf_duration').value = s.duration || '';
+        document.getElementById('sf_image').value = s.image || '';
+        document.getElementById('sf_badge').value = s.badge || '';
+        document.getElementById('sf_features').value = (s.features || []).join(', ');
+      }
+
+      if (btn.dataset.action === 'delete-service') {
+        if (!confirm('¿Eliminar este servicio?')) return;
+        const idx = svcs.findIndex(svc => svc.id === id);
+        if (idx !== -1) {
+          svcs.splice(idx, 1);
+          updateLocalServices(svcs);
+          try { fetch(`/api/admin/services/${id}`, { method: 'DELETE' }); } catch (e) { /* ignore */ }
+          renderServices();
+          this.renderServicesTab();
+          this._showToast('🗑️ Servicio eliminado');
+        }
+      }
+    });
+  },
+
+  async _saveService() {
+    const name = document.getElementById('sf_name').value.trim();
+    const description = document.getElementById('sf_description').value.trim();
+    const price = parseInt(document.getElementById('sf_price').value, 10);
+    const total = parseInt(document.getElementById('sf_total').value, 10);
+    const duration = document.getElementById('sf_duration').value.trim();
+    const image = document.getElementById('sf_image').value.trim();
+    const badge = document.getElementById('sf_badge').value.trim() || null;
+    const features = document.getElementById('sf_features').value.split(',').map(s => s.trim()).filter(Boolean);
+
+    if (!name || !price) { this._showToast('⚠️ Completá nombre y seña'); return; }
+
+    const svcs = getServices();
+    if (this.editingServiceId) {
+      const idx = svcs.findIndex(s => s.id === this.editingServiceId);
+      if (idx !== -1) {
+        svcs[idx] = { ...svcs[idx], name, description, price, total, duration, image, badge, features };
+        try { await fetch(`/api/admin/services/${this.editingServiceId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(svcs[idx]) }); } catch (e) { /* ignore */ }
+      }
+      this._showToast('✅ Servicio actualizado');
+    } else {
+      const newService = { id: Date.now(), name, description, price, total: total || price, duration: duration || '60 min', image, badge, features };
+      svcs.push(newService);
+      try { await fetch('/api/admin/services', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newService) }); } catch (e) { /* ignore */ }
+      this._showToast('✅ Servicio agregado');
+    }
+
+    updateLocalServices(svcs);
+    document.getElementById('adminServiceForm').classList.remove('is-open');
+    this.editingServiceId = null;
+    renderServices();
+    this.renderServicesTab();
   },
 
   _showToast(msg) {

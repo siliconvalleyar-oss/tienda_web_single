@@ -32,6 +32,18 @@ function initDB() {
       value TEXT NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS services (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      description TEXT DEFAULT '',
+      price INTEGER NOT NULL,
+      total INTEGER NOT NULL,
+      duration TEXT DEFAULT '60 min',
+      image TEXT DEFAULT '',
+      badge TEXT,
+      features TEXT DEFAULT '[]'
+    );
+
     CREATE TABLE IF NOT EXISTS orders (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       type TEXT NOT NULL,
@@ -72,6 +84,24 @@ function seedDB() {
   });
 
   insertMany(products);
+
+  // Default services
+  const insertService = db.prepare(`
+    INSERT INTO services (name, description, price, total, duration, image, badge, features)
+    VALUES (@name, @description, @price, @total, @duration, @image, @badge, @features)
+  `);
+
+  const services = [
+    { name: 'Manicure Clásica Premium', description: 'Limpieza, cutículas, limado, esmaltado tradicional y masaje relajante.', price: 1500, total: 4500, duration: '45 min', image: 'https://images.unsplash.com/photo-1607779097040-26e80aa78e66?w=500&q=80', badge: 'Más elegido', features: JSON.stringify(['45 min', 'Hidratación profunda']) },
+    { name: 'Esmaltado Semi-Permanente', description: 'Aplicación de base, color semipermanente y top coat con lámpara LED. Dura hasta 21 días.', price: 2000, total: 5800, duration: '60 min', image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=500&q=80', badge: null, features: JSON.stringify(['60 min', '40 colores a elección']) },
+    { name: 'Uñas Esculpidas en Gel', description: 'Extensión con tips o molde, construcción en gel y diseño personalizado a elección.', price: 3500, total: 9800, duration: '90 min', image: 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=500&q=80', badge: 'Premium', features: JSON.stringify(['90 min', 'Diseño incluido']) },
+    { name: 'Nail Art + Decoración', description: 'Diseño artístico personalizado con cristales, foil, glitter y técnicas avanzadas.', price: 2800, total: 7500, duration: '75 min', image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80', badge: null, features: JSON.stringify(['75 min', 'Materiales premium']) },
+  ];
+
+  const insertServices = db.transaction((items) => {
+    for (const item of items) insertService.run(item);
+  });
+  insertServices(services);
 
   // Default config
   const setConfig = db.prepare('INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)');

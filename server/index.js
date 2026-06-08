@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const { initDB, seedDB } = require('./db');
 const productsRouter = require('./routes/products');
+const servicesRouter = require('./routes/services');
 const adminRouter = require('./routes/admin');
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '..')));
 
 app.use('/api/products', productsRouter);
+app.use('/api/services', servicesRouter);
 app.use('/api/admin', adminRouter);
 
 app.post('/api/mercadopago/create-preference', (req, res) => {

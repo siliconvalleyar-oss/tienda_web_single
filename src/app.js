@@ -1,4 +1,5 @@
 import { loadProducts, renderProducts, getProducts } from './products.js';
+import { loadServices, renderServices } from './services.js';
 import { loadCart, updateCartUI, addToCart, updateCartQuantity, removeFromCart, setupCartSidebar } from './cart.js';
 import { PaymentModal, setupCartCheckout, setupReservations, setupPromoCheckout } from './mercadopago.js';
 import { AdminPanel, PaletteManager, ConfigManager } from './admin.js';
@@ -38,7 +39,9 @@ async function init() {
 
   loadCart();
   await loadProducts();
+  await loadServices();
   renderProducts();
+  renderServices();
   updateCartUI();
 
   PaymentModal.init();

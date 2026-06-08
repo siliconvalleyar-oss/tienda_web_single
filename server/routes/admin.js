@@ -64,6 +64,46 @@ router.put('/config', (req, res) => {
   res.json(config);
 });
 
+// Services CRUD
+router.get('/services', (req, res) => {
+  const db = getDB();
+  const services = db.prepare('SELECT * FROM services ORDER BY id').all();
+  res.json(services.map(s => ({ ...s, features: JSON.parse(s.features || '[]') })));
+});
+
+router.post('/services', (req, res) => {
+  const db = getDB();
+  const { name, description, price, total, duration, image, badge, features } = req.body;
+  if (!name || !price) return res.status(400).json({ error: 'Faltan campos requeridos' });
+  const result = db.prepare(
+    'INSERT INTO services (name, description, price, total, duration, image, badge, features) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run(name, description || '', price, total || price, duration || '60 min', image || '', badge || null, JSON.stringify(features || []));
+  const service = db.prepare('SELECT * FROM services WHERE id = ?').get(result.lastInsertRowid);
+  service.features = JSON.parse(service.features || '[]');
+  res.status(201).json(service);
+});
+
+router.put('/services/:id', (req, res) => {
+  const db = getDB();
+  const { name, description, price, total, duration, image, badge, features } = req.body;
+  const existing = db.prepare('SELECT * FROM services WHERE id = ?').get(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Servicio no encontrado' });
+  db.prepare(
+    'UPDATE services SET name=?, description=?, price=?, total=?, duration=?, image=?, badge=?, features=? WHERE id=?'
+  ).run(name, description || '', price, total || price, duration || '60 min', image || '', badge || null, JSON.stringify(features || []), req.params.id);
+  const service = db.prepare('SELECT * FROM services WHERE id = ?').get(req.params.id);
+  service.features = JSON.parse(service.features || '[]');
+  res.json(service);
+});
+
+router.delete('/services/:id', (req, res) => {
+  const db = getDB();
+  const existing = db.prepare('SELECT * FROM services WHERE id = ?').get(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Servicio no encontrado' });
+  db.prepare('DELETE FROM services WHERE id = ?').run(req.params.id);
+  res.json({ success: true });
+});
+
 // Orders
 router.get('/orders', (req, res) => {
   const db = getDB();
