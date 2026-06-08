@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Lumina Nails – Tienda online de productos profesionales para manicura. Reservas, promociones exclusivas y pago seguro con Mercado Pago.">
-  <title>Lumina Nails | Productos Profesionales de Manicura</title>
+  <meta name="description" id="metaDescription" content="Lumina Nails – Tienda online de productos profesionales para manicura. Reservas, promociones exclusivas y pago seguro con Mercado Pago.">
+  <title id="pageTitle">Lumina Nails | Productos Profesionales de Manicura</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,7 @@
     <div class="container header__inner">
       <a href="#" class="header__logo" aria-label="Ir al inicio">
         <i class="fa-solid fa-spa"></i>
-        <span>Lumina Nails</span>
+        <span data-config="name">Lumina Nails</span>
       </a>
 
       <nav class="header__nav" id="mainNav" aria-label="Menú principal">
@@ -114,9 +114,9 @@
         loading="eager"
       >
       <div class="container hero__content">
-        <h1 class="hero__title">Brilla con Estilo Propio</h1>
-        <p class="hero__subtitle">
-          Descubre nuestra colección premium de esmaltes, geles y herramientas profesionales.
+        <h1 class="hero__title" data-config="tagline">Brilla con Estilo Propio</h1>
+        <p class="hero__subtitle" data-config="heroText">
+          Descubrí nuestra colección premium de esmaltes, geles y herramientas profesionales.
           Reservá tu turno y pagá de forma segura con Mercado Pago.
         </p>
         <div class="hero__actions">
@@ -558,8 +558,8 @@
   <footer class="footer">
     <div class="container footer__inner">
       <div class="footer__col footer__col--brand">
-        <a href="#" class="footer__logo"><i class="fa-solid fa-spa"></i><span>Lumina Nails</span></a>
-        <p class="footer__about">Tienda online especializada en productos profesionales de manicura. Calidad, estilo y confianza en cada pedido.</p>
+        <a href="#" class="footer__logo"><i class="fa-solid fa-spa"></i><span data-config="name">Lumina Nails</span></a>
+        <p class="footer__about" data-config="footerText">Tienda online especializada en productos profesionales de manicura. Calidad, estilo y confianza en cada pedido.</p>
         <div class="footer__social">
           <a href="#" aria-label="Instagram" class="footer__social-link"><i class="fa-brands fa-instagram"></i></a>
           <a href="#" aria-label="Facebook" class="footer__social-link"><i class="fa-brands fa-facebook-f"></i></a>
@@ -589,26 +589,61 @@
       <div class="footer__col">
         <h4 class="footer__heading">Contacto</h4>
         <ul class="footer__links footer__links--contact">
-          <li><i class="fa-solid fa-envelope"></i> hola@luminanails.com</li>
-          <li><i class="fa-solid fa-phone"></i> +54 11 5555-1234</li>
-          <li><i class="fa-solid fa-location-dot"></i> Av. Santa Fe 1234, CABA, Argentina</li>
-          <li><i class="fa-solid fa-clock"></i> Lun–Vie 9:00–18:00 hs</li>
+          <li><i class="fa-solid fa-envelope"></i> <span data-config="email">hola@luminanails.com</span></li>
+          <li><i class="fa-solid fa-phone"></i> <span data-config="phone">+54 11 5555-1234</span></li>
+          <li><i class="fa-solid fa-location-dot"></i> <span data-config="address">Av. Santa Fe 1234, CABA, Argentina</span></li>
+          <li><i class="fa-solid fa-clock"></i> <span data-config="hours">Lun–Vie 9:00–18:00 hs</span></li>
         </ul>
       </div>
     </div>
     <div class="footer__bottom">
       <div class="container footer__bottom-inner">
-        <p>&copy; 2026 Lumina Nails. Todos los derechos reservados.</p>
+        <p>&copy; <span id="copyrightYear">2026</span> <span data-config="name">Lumina Nails</span>. Todos los derechos reservados.</p>
         <p class="footer__mp">Procesado por <strong>Mercado Pago</strong> · Pago seguro</p>
       </div>
     </div>
   </footer>
+
+  <!-- ================================================================ -->
+  <!-- ADMIN PANEL (configuración visual de la tienda)                  -->
+  <!-- ================================================================ -->
+  <div class="admin" id="adminPanel">
+    <button class="admin__toggle" id="adminToggle" aria-label="Abrir configuración">
+      <i class="fa-solid fa-palette"></i>
+    </button>
+    <div class="admin__overlay" id="adminOverlay"></div>
+    <div class="admin__panel" id="adminPanelContent">
+      <div class="admin__header">
+        <h2><i class="fa-solid fa-palette"></i> Administrar</h2>
+        <button class="admin__close" id="adminClose" aria-label="Cerrar configuración">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="admin__tabs" id="adminTabs">
+        <button class="admin__tab is-active" data-tab="general">
+          <i class="fa-solid fa-store"></i> General
+        </button>
+        <button class="admin__tab" data-tab="palette">
+          <i class="fa-solid fa-paint-brush"></i> Paleta
+        </button>
+        <button class="admin__tab" data-tab="products">
+          <i class="fa-solid fa-box"></i> Productos
+        </button>
+        <button class="admin__tab" data-tab="services">
+          <i class="fa-solid fa-hand-sparkles"></i> Servicios
+        </button>
+      </div>
+      <div class="admin__body" id="adminBody">
+        <!-- Se llena dinámicamente por JS -->
+      </div>
+    </div>
+  </div>
 
   <!-- Botón "Volver arriba" -->
   <button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">
     <i class="fa-solid fa-chevron-up"></i>
   </button>
 
-  <script src="script.js"></script>
+  <script type="module" src="src/app.js"></script>
 </body>
 </html>

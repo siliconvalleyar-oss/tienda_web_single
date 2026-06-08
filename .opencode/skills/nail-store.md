@@ -2,133 +2,136 @@
 
 ## Descripción del Proyecto
 
-Lumina Nails es una **Single Page Application (SPA)** de tienda online para un negocio de manicura profesional. Está construida con **HTML, CSS y JavaScript vanilla** (sin frameworks ni build tools). Incluye integración simulada con **Mercado Pago** lista para conectar con un backend real.
+Lumina Nails es una **Single Page Application (SPA)** de tienda online para manicura profesional. Construida con **HTML, CSS y JavaScript vanilla** (ES modules). Incluye panel de administración visual, sistema de paletas de color, carrito de compras, integración simulada con **Mercado Pago**, y servidor backend con **Express + SQLite**.
 
 ## Stack Tecnológico
 
 | Capa | Tecnología |
 |------|-----------|
-| HTML | `index.html` (único archivo, todas las secciones) |
-| CSS  | `styles.css` (1773 líneas, mobile-first) |
-| JS   | `script.js` (847 líneas, modular, 21 secciones) |
-| Iconos | Font Awesome 6 |
-| Fuentes | Google Fonts (Montserrat + Playfair Display) |
-| Pagos | Mercado Pago SDK v2 (modo simulación) |
+| Frontend | HTML + CSS + JS (ES modules) |
+| Backend  | Node.js + Express |
+| DB       | SQLite (better-sqlite3) |
+| Iconos   | Font Awesome 6 |
+| Fuentes  | Google Fonts (Montserrat + Playfair Display) |
+| Pagos    | Mercado Pago SDK v2 (simulado, listo para producción) |
 | Imágenes | Unsplash (URLs externas) |
+
+## Estructura del Proyecto
+
+```
+nail-store/
+├── index.html              # Página principal
+├── styles.css               # Todos los estilos
+├── package.json             # Dependencias del servidor
+├── .gitignore
+├── opencode.json
+├── .opencode/skills/
+│   └── nail-store.md
+├── src/                     # Módulos JS frontend
+│   ├── app.js               # Entry point, init()
+│   ├── config.js            # CONFIG, PALETTES, formatPrice, escapeHTML
+│   ├── products.js          # Productos (fetch API + fallback localStorage)
+│   ├── cart.js              # Carrito, UI, sidebar
+│   ├── mercadopago.js       # PaymentModal, checkout, reservas, promos
+│   ├── admin.js             # AdminPanel, PaletteManager, ConfigManager
+│   └── ui.js                # Toast, scroll reveal, menú móvil, utilidades
+├── server/                  # Backend Express
+│   ├── index.js             # Servidor Express
+│   ├── db.js                # SQLite (init + seed)
+│   ├── store.db             # Base de datos SQLite (auto-generada)
+│   └── routes/
+│       ├── products.js      # GET /api/products
+│       └── admin.js         # CRUD productos + config + orders
+└── script.js                # (legacy, ya no se usa)
+```
+
+## Cómo ejecutar
+
+```bash
+npm install        # Instalar dependencias
+npm start          # Iniciar servidor en http://localhost:3000
+npm run seed       # Resetear datos a valores iniciales
+```
 
 ## Arquitectura
 
+### Frontend (src/)
+Módulos ES6 con imports/exports:
+
+| Módulo | Responsabilidad |
+|--------|----------------|
+| `config.js` | Constantes: CONFIG (MP keys), PALETTES (6 paletas), utilidades |
+| `products.js` | Fetch productos desde API, render, CRUD, fallback localStorage |
+| `cart.js` | Estado del carrito, UI, sidebar, persistencia localStorage |
+| `mercadopago.js` | PaymentModal, integración MP, checkout carrito/reserva/promo |
+| `admin.js` | AdminPanel (tabs), PaletteManager, ConfigManager |
+| `ui.js` | Toast, scroll reveal, menú móvil, header scroll, nav active, newsletter |
+| `app.js` | Importa todo, event delegation, init() |
+
+### Backend (server/)
+
+| Endpoint | Método | Descripción |
+|----------|--------|-------------|
+| `/api/products` | GET | Listar productos |
+| `/api/products/:id` | GET | Producto por ID |
+| `/api/admin/products` | GET/POST | CRUD productos (admin) |
+| `/api/admin/products/:id` | PUT/DELETE | CRUD productos (admin) |
+| `/api/admin/config` | GET/PUT | Configuración del sitio |
+| `/api/admin/orders` | GET | Listar órdenes |
+| `/api/mercadopago/create-preference` | POST | Crear preferencia de pago MP |
+
 ### index.html
-Una sola página con 11 secciones:
+12 secciones: Header, Hero, Productos, Servicios, Ofertas, Promociones, Beneficios, Testimonios, Contacto, Footer, Carrito lateral, Admin Panel.
 
-| Sección | ID | Descripción |
-|---------|----|-------------|
-| Header | `#header` | Fixed nav + carrito + menú móvil |
-| Hero | `#inicio` | Banner principal con CTA |
-| Productos | `#productos` | Grid de 8 productos (render vía JS) |
-| Servicios | `#servicios` | 4 servicios con reserva y seña online |
-| Ofertas | `#ofertas` | Productos con descuento (render vía JS) |
-| Promociones | `#promociones` | Membresías, Gift Cards, Packs |
-| Beneficios | — | 4 cards informativas |
-| Testimonios | — | 3 reseñas de clientes |
-| Contacto | `#contacto` | Newsletter + medios de pago |
-| Footer | — | Links, redes, contacto |
-| Carrito lateral | `#cartSidebar` | Slide-in panel del carrito |
-| Modal de pago | `#paymentModal` | Modal de confirmación y pago MP |
+## Sistema de Administración
 
-### script.js
-Organizado en 21 módulos numerados:
+Botón flotante 🎨 (abajo a la izquierda) → panel con 4 tabs:
 
-1. **CONFIG** – Configuración central (MP public key, endpoint backend)
-2. **products** – Array de 8 productos con precio, imagen, badge
-3. **Cart state** – `cart` object, localStorage, `addToCart`, `removeFromCart`, `updateCartQuantity`, `clearCart`
-4. **Cart UI** – `updateCartUI`, `renderCartBadge`, `renderCartItems`, `renderCartFooter`
-5. **Product rendering** – `createProductCard`, `renderProducts`
-6. **MercadoPago** – `init`, `crearPago` (simulado, preparado para fetch a backend)
-7. **PaymentModal** – Modal de pago con `abrir`, `cerrar`, `_render`, `_procesarPago`
-8. **Cart checkout** – Botón "Pagar con Mercado Pago" + "Vaciar Carrito"
-9. **Reservations** – Click en botones `[data-action="reserve"]` → abre modal con seña
-10. **Promo checkout** – Click en botones `[data-action="promo-checkout"]`
-11. **Event delegation** – Click en `[data-action]` para add-to-cart, increase, decrease, remove
-12. **Cart sidebar** – `setupCartSidebar` (open/close con overlay y Escape key)
-13. **Mobile menu** – `setupMobileMenu` (burger toggle)
-14. **Header scroll** – `setupHeaderScroll` (sombra al scrollear)
-15. **Active nav** – `setupActiveNavHighlight` (IntersectionObserver-like)
-16. **Scroll to top** – `setupScrollTopButton`
-17. **Scroll reveal** – `setupScrollReveal` (IntersectionObserver)
-18. **Newsletter** – `setupNewsletterForm` (simulado, muestra toast)
-19. **Toast** – `showToast` (notificaciones flotantes)
-20. **Utilities** – `formatPrice`, `escapeHTML`
-21. **Init** – `init()` (punto de entrada, llama a todo)
+| Tab | Funcionalidad |
+|-----|---------------|
+| **General** | Editar nombre, tagline, textos, email, teléfono, dirección, horarios |
+| **Paleta** | 6 paletas visuales (Nude Rose, Lavanda, Menta, Coral, Oro Rosa, Noche) |
+| **Productos** | CRUD completo: agregar, editar, eliminar (persiste en API + localStorage) |
+| **Servicios** | Vista informativa (edición vía HTML) |
 
-### styles.css
-1773 líneas, mobile-first, 20 secciones:
+Los datos de configuración se persisten en el backend (SQLite) y como fallback en localStorage.
 
-- Custom Properties (paleta nude/rosa/negro, vars MP)
-- Reset & Base
-- Utilidades (.btn, .section, .container)
-- Header (fixed, backdrop-filter, menú móvil)
-- Carrito lateral (slide-in, overlay)
-- Modal de pago (centrado, animación)
-- Hero (full-screen, overlay gradiente)
-- Productos (grid responsive, hover scale)
-- Servicios (cards con precio de seña)
-- Promociones (cards con border destacado)
-- Beneficios (iconos circulares)
-- Testimonios (estrellas, avatar)
-- Contacto (formulario, grid)
-- Footer (grid oscuro)
-- Scroll top button
-- Toast
-- Animaciones (fadeInUp, fadeIn, reveal)
-- Responsive (640px, 1024px, max-639px)
+## Sistema de Paletas
 
-## Flujo de Pago (Mercado Pago)
+6 paletas de color definidas en `PALETTES` (config.js). Se aplican sobrescribiendo variables CSS en `:root` mediante `PaletteManager.apply()`. Transición suave vía clase `palette-transitioning`.
 
-1. Usuario agrega productos al carrito / selecciona servicio / promo
-2. Hace clic en "Pagar con Mercado Pago"
-3. Se abre el `PaymentModal` con resumen de compra
-4. Usuario confirma → se simula `crearPago()` con 800ms de delay
-5. Se muestra toast de "Redirigiendo a Mercado Pago..."
-6. A los 1.5s se simula pago exitoso
-7. Si es carrito, se vacía automáticamente
+Para agregar una paleta: agregar entrada en `PALETTES` con `id`, `name`, `desc`, `colors` (pares var:valor) y `swatches` (array de hex para previsualización).
 
-**Para producción**: Reemplazar la simulación en `MercadoPago.crearPago()` con un `fetch` al backend que genere un `preferenceId` real y use `mp.checkout()`.
+## Personalización vía data-config
 
-## Convenciones de Código
+Elementos con `data-config` se actualizan automáticamente al guardar en General tab:
 
-- **Nomenclatura**: BEM para CSS (`bloque__elemento--modificador`), camelCase para JS
-- **Comentarios**: En español, con separadores de sección (`----`)
-- **ES6+**: `const/let`, arrow functions, template literals, `async/await`
-- **Sin dependencias**: No hay package.json, build tools, ni bundlers
-- **Español**: Nombres de funciones, variables y textos en español argentino
-- **Mercado Pago**: La `publicKey` actual es `TEST-0000...` (placeholder). Reemplazar antes de producción.
+| Atributo | Elemento |
+|----------|----------|
+| `name` | Nombre del negocio (header, footer, title) |
+| `tagline` | Frase del Hero |
+| `heroText` | Texto del Hero |
+| `email` | Email en footer |
+| `phone` | Teléfono en footer |
+| `address` | Dirección en footer |
+| `hours` | Horarios en footer |
+| `footerText` | Descripción del footer |
 
-## Tareas Comunes
+## Rutas de Escalabilidad
 
-### Agregar un producto nuevo
-1. Agregar objeto al array `products` en script.js (seguir la misma estructura)
-2. El producto aparece automáticamente en la grid de productos y ofertas (si tiene `oldPrice`)
-
-### Agregar un servicio nuevo
-1. Agregar `<article class="service-card reveal">` en `#servicesGrid` en index.html
-2. Seguir el mismo patrón de `data-*` attributes (`data-action="reserve"`, `data-service-id`, etc.)
-
-### Conectar Mercado Pago real
-1. Crear un backend con endpoint `POST /api/mercadopago/create-preference`
-2. Reemplazar `CONFIG.mercadoPago.publicKey` con la Public Key real
-3. En `MercadoPago.crearPago()`, descomentar el `fetch` y reemplazar la simulación
-4. Usar `mp.checkout({ preference: { id: preferenceId } })` en vez de simular
-
-### Agregar promoción
-1. Agregar `<article class="promo-card reveal">` en `#promosGrid` en index.html
-2. Usar `data-action="promo-checkout"` para activar el modal de pago
+1. **Autenticación admin** → JWT + login en `/admin`
+2. **Editor de servicios** → Mover servicios del HTML al config + API
+3. **Subida de imágenes** → multer/cloudinary en reemplazo de URLs
+4. **Órdenes completas** → Guardar carrito como orden pagada en DB
+5. **Dashboard** → Chart.js con analytics de ventas
+6. **Multi-tienda** → namespace de config por tienda en la misma DB
 
 ## Buenas Prácticas
 
-- Los datos de productos ya están preparados para migrar a una API REST
-- El carrito persiste en `localStorage` con key `lumina_cart`
-- El código maneja graceful degradation (localStorage puede fallar en navegación privada)
-- La animación scroll-reveal usa `IntersectionObserver` (no librerías externas)
-- Los precios se formatean con `toLocaleString("es-AR")`
-- Se usa `escapeHTML()` para prevenir XSS en datos dinámicos
+- ES modules nativos (sin bundler), servidos por Express como estáticos
+- La API es el source of truth; localStorage es fallback offline
+- Todas las transiciones de color usan variables CSS + `palette-transitioning`
+- `escapeHTML()` previene XSS en datos dinámicos
+- El carrito persiste en localStorage (`lumina_cart`)
+- Servidor con Express, SQLite con WAL mode para performance
+- Seed automático al primer inicio (DB vacía → datos iniciales)

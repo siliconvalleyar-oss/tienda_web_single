@@ -1,0 +1,17 @@
+{
+  "name": "lumina-nails",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lumina Nails - Tienda online de manicura profesional",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "seed": "node server/seed.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0"
+  }
+}

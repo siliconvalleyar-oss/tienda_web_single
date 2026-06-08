@@ -1,22 +1,12 @@
-# OS
+node_modules/
+server/store.db
 .DS_Store
 Thumbs.db
 *.swp
 *.swo
 *~
-
-# IDE
-.idea/
-.vscode/
-*.sublime-*
-
-# Env
 .env
 .env.local
-
-# Logs
 *.log
-
-# Temp
 tmp/
 temp/
