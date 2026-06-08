@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Lumina Nails – Tienda online de productos profesionales para manicura. Reservas, promociones exclusivas y pago seguro con Mercado Pago.">
+  <title>Lumina Nails | Productos Profesionales de Manicura</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Mercado Pago SDK -->
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ================================================================ -->
+  <!-- HEADER                                                            -->
+  <!-- ================================================================ -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <a href="#" class="header__logo" aria-label="Ir al inicio">
+        <i class="fa-solid fa-spa"></i>
+        <span>Lumina Nails</span>
+      </a>
+
+      <nav class="header__nav" id="mainNav" aria-label="Menú principal">
+        <ul class="header__menu">
+          <li><a href="#inicio" class="header__link active">Inicio</a></li>
+          <li><a href="#productos" class="header__link">Productos</a></li>
+          <li><a href="#servicios" class="header__link">Servicios</a></li>
+          <li><a href="#ofertas" class="header__link">Ofertas</a></li>
+          <li><a href="#contacto" class="header__link">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <div class="header__actions">
+        <button class="header__cart-btn" id="cartToggle" aria-label="Abrir carrito de compras">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="header__cart-badge" id="cartBadge">0</span>
+        </button>
+        <button class="header__burger" id="burgerBtn" aria-label="Abrir menú" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================================================================ -->
+  <!-- CARRITO LATERAL                                                  -->
+  <!-- ================================================================ -->
+  <aside class="cart-sidebar" id="cartSidebar" aria-hidden="true">
+    <div class="cart-sidebar__overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar__panel">
+      <div class="cart-sidebar__header">
+        <h2>Tu Carrito</h2>
+        <button class="cart-sidebar__close" id="cartClose" aria-label="Cerrar carrito">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="cart-sidebar__items" id="cartItems">
+        <p class="cart-sidebar__empty">Tu carrito está vacío.</p>
+      </div>
+      <div class="cart-sidebar__footer" id="cartFooter" style="display:none;">
+        <div class="cart-sidebar__total">
+          <span>Total:</span>
+          <strong id="cartTotal">$0.00</strong>
+        </div>
+        <button class="btn btn--primary btn--block" id="checkoutBtn">
+          <i class="fa-solid fa-credit-card"></i> Pagar con Mercado Pago
+        </button>
+        <button class="btn btn--outline btn--block" id="clearCartBtn">
+          <i class="fa-solid fa-trash-can"></i> Vaciar Carrito
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================================================================ -->
+  <!-- MODAL DE PAGO (Mercado Pago / Reserva)                           -->
+  <!-- ================================================================ -->
+  <div class="modal" id="paymentModal" aria-hidden="true">
+    <div class="modal__overlay" id="paymentModalOverlay"></div>
+    <div class="modal__content">
+      <button class="modal__close" id="paymentModalClose" aria-label="Cerrar">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal__body" id="paymentModalBody">
+        <!-- Se llena dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- MAIN CONTENT                                                     -->
+  <!-- ================================================================ -->
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+      <div class="hero__overlay"></div>
+      <img
+        src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=1200&q=80"
+        alt="Manicura profesional"
+        class="hero__bg"
+        loading="eager"
+      >
+      <div class="container hero__content">
+        <h1 class="hero__title">Brilla con Estilo Propio</h1>
+        <p class="hero__subtitle">
+          Descubre nuestra colección premium de esmaltes, geles y herramientas profesionales.
+          Reservá tu turno y pagá de forma segura con Mercado Pago.
+        </p>
+        <div class="hero__actions">
+          <a href="#productos" class="btn btn--primary hero__cta">
+            Comprar Ahora <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <a href="#servicios" class="btn btn--outline-light hero__cta">
+            Reservar Turno <i class="fa-regular fa-calendar-check"></i>
+          </a>
+        </div>
+      </div>
+      <!-- Badge Mercado Pago -->
+      <div class="hero__mp-badge">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Pagá seguro con</span>
+        <strong>Mercado Pago</strong>
+      </div>
+    </section>
+
+    <!-- PRODUCTOS -->
+    <section class="products section" id="productos">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__tag">Catálogo</span>
+          <h2 class="section__title">Nuestros Productos</h2>
+          <p class="section__subtitle">Seleccionados para realzar tu belleza</p>
+        </div>
+        <div class="products__grid" id="productsGrid"></div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- SECCIÓN DE SERVICIOS Y RESERVAS (PAGO CON MERCADO PAGO)          -->
+    <!-- ================================================================ -->
+    <section class="services section section--light" id="servicios">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__tag">Reservá tu turno</span>
+          <h2 class="section__title">Servicios con Seña Online</h2>
+          <p class="section__subtitle">
+            Elegí tu servicio, aboná la seña con Mercado Pago y asegurá tu turno
+          </p>
+        </div>
+
+        <!-- Grid de servicios -->
+        <div class="services__grid" id="servicesGrid">
+          <!-- Servicio 1 -->
+          <article class="service-card reveal">
+            <div class="service-card__img-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1607779097040-26e80aa78e66?w=500&q=80"
+                alt="Manicure Clásica"
+                class="service-card__img"
+                loading="lazy"
+              >
+              <span class="service-card__badge">Más elegido</span>
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__name">Manicure Clásica Premium</h3>
+              <p class="service-card__desc">Limpieza, cutículas, limado, esmaltado tradicional y masaje relajante.</p>
+              <ul class="service-card__features">
+                <li><i class="fa-regular fa-clock"></i> 45 min</li>
+                <li><i class="fa-solid fa-check"></i> Hidratación profunda</li>
+              </ul>
+              <div class="service-card__price">
+                <span class="service-card__price-label">Seña online</span>
+                <span class="service-card__price-value">$1.500</span>
+              </div>
+              <p class="service-card__price-total">Total del servicio: $4.500</p>
+              <button class="btn btn--primary btn--block service-card__btn"
+                data-action="reserve"
+                data-service-id="svc_001"
+                data-service-name="Manicure Clásica Premium"
+                data-service-price="1500"
+                data-service-total="4500"
+                data-service-duration="45 min">
+                <i class="fa-solid fa-calendar-plus"></i> Reservar con Seña
+              </button>
+            </div>
+          </article>
+
+          <!-- Servicio 2 -->
+          <article class="service-card reveal">
+            <div class="service-card__img-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=500&q=80"
+                alt="Semipermanente"
+                class="service-card__img"
+                loading="lazy"
+              >
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__name">Esmaltado Semi-Permanente</h3>
+              <p class="service-card__desc">Aplicación de base, color semipermanente y top coat con lámpara LED. Dura hasta 21 días.</p>
+              <ul class="service-card__features">
+                <li><i class="fa-regular fa-clock"></i> 60 min</li>
+                <li><i class="fa-solid fa-check"></i> 40 colores a elección</li>
+              </ul>
+              <div class="service-card__price">
+                <span class="service-card__price-label">Seña online</span>
+                <span class="service-card__price-value">$2.000</span>
+              </div>
+              <p class="service-card__price-total">Total del servicio: $5.800</p>
+              <button class="btn btn--primary btn--block service-card__btn"
+                data-action="reserve"
+                data-service-id="svc_002"
+                data-service-name="Esmaltado Semi-Permanente"
+                data-service-price="2000"
+                data-service-total="5800"
+                data-service-duration="60 min">
+                <i class="fa-solid fa-calendar-plus"></i> Reservar con Seña
+              </button>
+            </div>
+          </article>
+
+          <!-- Servicio 3 -->
+          <article class="service-card reveal">
+            <div class="service-card__img-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=500&q=80"
+                alt="Uñas de Gel"
+                class="service-card__img"
+                loading="lazy"
+              >
+              <span class="service-card__badge service-card__badge--accent">Premium</span>
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__name">Uñas Esculpidas en Gel</h3>
+              <p class="service-card__desc">Extensión con tips o molde, construcción en gel y diseño personalizado a elección.</p>
+              <ul class="service-card__features">
+                <li><i class="fa-regular fa-clock"></i> 90 min</li>
+                <li><i class="fa-solid fa-check"></i> Diseño incluido</li>
+              </ul>
+              <div class="service-card__price">
+                <span class="service-card__price-label">Seña online</span>
+                <span class="service-card__price-value">$3.500</span>
+              </div>
+              <p class="service-card__price-total">Total del servicio: $9.800</p>
+              <button class="btn btn--primary btn--block service-card__btn"
+                data-action="reserve"
+                data-service-id="svc_003"
+                data-service-name="Uñas Esculpidas en Gel"
+                data-service-price="3500"
+                data-service-total="9800"
+                data-service-duration="90 min">
+                <i class="fa-solid fa-calendar-plus"></i> Reservar con Seña
+              </button>
+            </div>
+          </article>
+
+          <!-- Servicio 4 -->
+          <article class="service-card reveal">
+            <div class="service-card__img-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80"
+                alt="Nail Art"
+                class="service-card__img"
+                loading="lazy"
+              >
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__name">Nail Art + Decoración</h3>
+              <p class="service-card__desc">Diseño artístico personalizado con cristales, foil, glitter y técnicas avanzadas.</p>
+              <ul class="service-card__features">
+                <li><i class="fa-regular fa-clock"></i> 75 min</li>
+                <li><i class="fa-solid fa-check"></i> Materiales premium</li>
+              </ul>
+              <div class="service-card__price">
+                <span class="service-card__price-label">Seña online</span>
+                <span class="service-card__price-value">$2.800</span>
+              </div>
+              <p class="service-card__price-total">Total del servicio: $7.500</p>
+              <button class="btn btn--primary btn--block service-card__btn"
+                data-action="reserve"
+                data-service-id="svc_004"
+                data-service-name="Nail Art + Decoración"
+                data-service-price="2800"
+                data-service-total="7500"
+                data-service-duration="75 min">
+                <i class="fa-solid fa-calendar-plus"></i> Reservar con Seña
+              </button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- OFERTAS -->
+    <section class="offers section section--accent" id="ofertas">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__tag section__tag--light">No te las pierdas</span>
+          <h2 class="section__title section__title--light">Ofertas Especiales</h2>
+          <p class="section__subtitle section__subtitle--light">Productos destacados con descuento por tiempo limitado</p>
+        </div>
+        <div class="products__grid" id="offersGrid"></div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- PROMOCIONES PAGAS (MERCADO PAGO)                                 -->
+    <!-- ================================================================ -->
+    <section class="promos section" id="promociones">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__tag">Exclusivo Online</span>
+          <h2 class="section__title">Promociones con Beneficio</h2>
+          <p class="section__subtitle">
+            Adquirí paquetes promocionales con descuento y pagalos online con Mercado Pago
+          </p>
+        </div>
+
+        <div class="promos__grid" id="promosGrid">
+          <!-- Promo 1 -->
+          <article class="promo-card reveal">
+            <div class="promo-card__header">
+              <i class="fa-solid fa-crown"></i>
+              <span>Plan Mensual</span>
+            </div>
+            <div class="promo-card__body">
+              <h3 class="promo-card__name">Membresía Gold</h3>
+              <p class="promo-card__desc">1 manicure por semana + 10% de descuento en todos los productos de la tienda.</p>
+              <ul class="promo-card__perks">
+                <li><i class="fa-solid fa-check"></i> 4 servicios al mes</li>
+                <li><i class="fa-solid fa-check"></i> 10% OFF en productos</li>
+                <li><i class="fa-solid fa-check"></i> Turno prioritario</li>
+                <li><i class="fa-solid fa-check"></i> Regalo de bienvenida</li>
+              </ul>
+              <div class="promo-card__price">
+                <span class="promo-card__price-old">$18.000</span>
+                <span class="promo-card__price-current">$12.500<span>/mes</span></span>
+              </div>
+              <button class="btn btn--primary btn--block promo-card__btn"
+                data-action="promo-checkout"
+                data-promo-id="promo_001"
+                data-promo-name="Membresía Gold Mensual"
+                data-promo-price="12500">
+                <i class="fa-solid fa-credit-card"></i> Comprar con Mercado Pago
+              </button>
+              <p class="promo-card__mp-note">
+                <i class="fa-solid fa-lock"></i> Pago seguro · Hasta 12 cuotas sin interés
+              </p>
+            </div>
+          </article>
+
+          <!-- Promo 2 -->
+          <article class="promo-card promo-card--featured reveal">
+            <div class="promo-card__header">
+              <i class="fa-solid fa-gem"></i>
+              <span>Más popular</span>
+            </div>
+            <div class="promo-card__body">
+              <h3 class="promo-card__name">Pack Novia Platinum</h3>
+              <p class="promo-card__desc">Preparación completa para tu día especial. Incluye prueba previa sin cargo.</p>
+              <ul class="promo-card__perks">
+                <li><i class="fa-solid fa-check"></i> Manicure + Pedicure premium</li>
+                <li><i class="fa-solid fa-check"></i> Nail Art personalizado</li>
+                <li><i class="fa-solid fa-check"></i> Prueba previa gratuita</li>
+                <li><i class="fa-solid fa-check"></i> Kit de regalo post-evento</li>
+              </ul>
+              <div class="promo-card__price">
+                <span class="promo-card__price-old">$22.000</span>
+                <span class="promo-card__price-current">$15.800<span>/único</span></span>
+              </div>
+              <button class="btn btn--primary btn--block promo-card__btn"
+                data-action="promo-checkout"
+                data-promo-id="promo_002"
+                data-promo-name="Pack Novia Platinum"
+                data-promo-price="15800">
+                <i class="fa-solid fa-credit-card"></i> Comprar con Mercado Pago
+              </button>
+              <p class="promo-card__mp-note">
+                <i class="fa-solid fa-lock"></i> Pago seguro · Reserva con 30 días de anticipación
+              </p>
+            </div>
+          </article>
+
+          <!-- Promo 3 -->
+          <article class="promo-card reveal">
+            <div class="promo-card__header">
+              <i class="fa-solid fa-gift"></i>
+              <span>Gift Card</span>
+            </div>
+            <div class="promo-card__body">
+              <h3 class="promo-card__name">Gift Card Regalo</h3>
+              <p class="promo-card__desc">La tarjeta de regalo perfecta para amantes de la manicura. Canjeable por servicios o productos.</p>
+              <ul class="promo-card__perks">
+                <li><i class="fa-solid fa-check"></i> Válida por 6 meses</li>
+                <li><i class="fa-solid fa-check"></i> Canjeable en servicios o productos</li>
+                <li><i class="fa-solid fa-check"></i> Envío digital inmediato</li>
+                <li><i class="fa-solid fa-check"></i> Sin fecha de vencimiento forzosa</li>
+              </ul>
+              <div class="promo-card__price">
+                <span class="promo-card__price-label">Desde</span>
+                <span class="promo-card__price-current">$5.000</span>
+              </div>
+              <div class="promo-card__amounts">
+                <button class="promo-card__amount-btn"
+                  data-action="promo-checkout"
+                  data-promo-id="gift_001"
+                  data-promo-name="Gift Card $5.000"
+                  data-promo-price="5000">$5.000</button>
+                <button class="promo-card__amount-btn"
+                  data-action="promo-checkout"
+                  data-promo-id="gift_002"
+                  data-promo-name="Gift Card $10.000"
+                  data-promo-price="10000">$10.000</button>
+                <button class="promo-card__amount-btn"
+                  data-action="promo-checkout"
+                  data-promo-id="gift_003"
+                  data-promo-name="Gift Card $15.000"
+                  data-promo-price="15000">$15.000</button>
+              </div>
+              <p class="promo-card__mp-note">
+                <i class="fa-solid fa-lock"></i> Pago seguro con Mercado Pago
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENEFICIOS -->
+    <section class="benefits section section--light">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__tag">¿Por qué elegirnos?</span>
+          <h2 class="section__title">Beneficios Lumina</h2>
+        </div>
+        <div class="benefits__grid">
+          <article class="benefit-card">
+            <div class="benefit-card__icon"><i class="fa-solid fa-truck-fast"></i></div>
+            <h3 class="benefit-card__title">Envíos Rápidos</h3>
+            <p class="benefit-card__desc">Entrega en 24/48h hábiles. Seguimiento en tiempo real de tu pedido.</p>
+          </article>
+          <article class="benefit-card">
+            <div class="benefit-card__icon"><i class="fa-solid fa-certificate"></i></div>
+            <h3 class="benefit-card__title">Calidad Profesional</h3>
+            <p class="benefit-card__desc">Trabajamos con las mejores marcas del mercado. Productos testeados dermatológicamente.</p>
+          </article>
+          <article class="benefit-card">
+            <div class="benefit-card__icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <h3 class="benefit-card__title">Pago Seguro</h3>
+            <p class="benefit-card__desc">Todas las transacciones procesadas por Mercado Pago con cifrado SSL y protección anti-fraude.</p>
+          </article>
+          <article class="benefit-card">
+            <div class="benefit-card__icon"><i class="fa-solid fa-hand-sparkles"></i></div>
+            <h3 class="benefit-card__title">Fácil Aplicación</h3>
+            <p class="benefit-card__desc">Fórmulas diseñadas para un acabado perfecto. Tutoriales incluidos en cada compra.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section class="testimonials section">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__tag">Clientes felices</span>
+          <h2 class="section__title">Testimonios</h2>
+        </div>
+        <div class="testimonials__grid">
+          <blockquote class="testimonial-card">
+            <div class="testimonial-card__stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <p class="testimonial-card__text">
+              "Los esmaltes tienen una pigmentación increíble. Reservé online pagando la seña con Mercado Pago y fue súper fácil. ¡Recomendadísimo!"
+            </p>
+            <footer class="testimonial-card__author">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face" alt="María García" class="testimonial-card__avatar" loading="lazy">
+              <div><cite>María García</cite><span>Cliente frecuente</span></div>
+            </footer>
+          </blockquote>
+          <blockquote class="testimonial-card">
+            <div class="testimonial-card__stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <p class="testimonial-card__text">
+              "Compré el kit de gel y aproveché una promoción con Mercado Pago en cuotas. La calidad es igual a la del salón."
+            </p>
+            <footer class="testimonial-card__author">
+              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face" alt="Carolina López" class="testimonial-card__avatar" loading="lazy">
+              <div><cite>Carolina López</cite><span>Nail artist</span></div>
+            </footer>
+          </blockquote>
+          <blockquote class="testimonial-card">
+            <div class="testimonial-card__stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+            </div>
+            <p class="testimonial-card__text">
+              "Soy principiante y las herramientas son súper fáciles de usar. Pagué con MP y a los dos días ya tenía todo en casa."
+            </p>
+            <footer class="testimonial-card__author">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face" alt="Valentina Ruiz" class="testimonial-card__avatar" loading="lazy">
+              <div><cite>Valentina Ruiz</cite><span>Primera compra</span></div>
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTO / NEWSLETTER -->
+    <section class="contact section section--light" id="contacto">
+      <div class="container">
+        <div class="contact__card">
+          <div class="contact__info">
+            <h2 class="contact__title">¿Tenés dudas?</h2>
+            <p class="contact__text">
+              Suscribite a nuestro newsletter y recibí un <strong>10% de descuento</strong> en tu primera compra.
+            </p>
+            <form class="contact__form" id="newsletterForm">
+              <div class="contact__input-group">
+                <input type="email" name="email" placeholder="tu@email.com" required aria-label="Correo electrónico">
+                <button type="submit" class="btn btn--primary">Suscribirme</button>
+              </div>
+            </form>
+            <!-- Medios de pago -->
+            <div class="contact__payment-methods">
+              <span>Aceptamos:</span>
+              <div class="contact__payment-icons">
+                <i class="fa-solid fa-credit-card" title="Tarjeta de crédito"></i>
+                <i class="fa-solid fa-money-bill-transfer" title="Transferencia"></i>
+                <i class="fa-solid fa-qrcode" title="QR Mercado Pago"></i>
+                <img src="https://http2.mlstatic.com/frontend-assets/ui-web-payment/payment-methods-v2/small/mercadopago_credit_card.png" alt="Mercado Pago" width="28" height="20" loading="lazy">
+              </div>
+            </div>
+          </div>
+          <div class="contact__visual">
+            <img src="https://images.unsplash.com/photo-1610992015732-2449bc5ccd51?w=500&q=80" alt="Newsletter Lumina Nails" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__col footer__col--brand">
+        <a href="#" class="footer__logo"><i class="fa-solid fa-spa"></i><span>Lumina Nails</span></a>
+        <p class="footer__about">Tienda online especializada en productos profesionales de manicura. Calidad, estilo y confianza en cada pedido.</p>
+        <div class="footer__social">
+          <a href="#" aria-label="Instagram" class="footer__social-link"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="Facebook" class="footer__social-link"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="TikTok" class="footer__social-link"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" aria-label="Pinterest" class="footer__social-link"><i class="fa-brands fa-pinterest-p"></i></a>
+        </div>
+      </div>
+      <div class="footer__col">
+        <h4 class="footer__heading">Enlaces Rápidos</h4>
+        <ul class="footer__links">
+          <li><a href="#inicio">Inicio</a></li>
+          <li><a href="#productos">Productos</a></li>
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#ofertas">Ofertas</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4 class="footer__heading">Ayuda</h4>
+        <ul class="footer__links">
+          <li><a href="#">Preguntas Frecuentes</a></li>
+          <li><a href="#">Envíos y Devoluciones</a></li>
+          <li><a href="#">Términos y Condiciones</a></li>
+          <li><a href="#">Política de Privacidad</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4 class="footer__heading">Contacto</h4>
+        <ul class="footer__links footer__links--contact">
+          <li><i class="fa-solid fa-envelope"></i> hola@luminanails.com</li>
+          <li><i class="fa-solid fa-phone"></i> +54 11 5555-1234</li>
+          <li><i class="fa-solid fa-location-dot"></i> Av. Santa Fe 1234, CABA, Argentina</li>
+          <li><i class="fa-solid fa-clock"></i> Lun–Vie 9:00–18:00 hs</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="container footer__bottom-inner">
+        <p>&copy; 2026 Lumina Nails. Todos los derechos reservados.</p>
+        <p class="footer__mp">Procesado por <strong>Mercado Pago</strong> · Pago seguro</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Botón "Volver arriba" -->
+  <button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">
+    <i class="fa-solid fa-chevron-up"></i>
+  </button>
+
+  <script src="script.js"></script>
+</body>
+</html>
