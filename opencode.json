@@ -1,0 +1,9 @@
+{
+  "skills": [
+    {
+      "name": "nail-store",
+      "description": "Usar cuando trabajes con Lumina Nails, la tienda web SPA de manicura con carrito, reservas y Mercado Pago. Incluye el archivo index.html, script.js y styles.css.",
+      "filePath": ".opencode/skills/nail-store.md"
+    }
+  ]
+}
